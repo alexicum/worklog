@@ -17,6 +17,7 @@
     "@fastify/type-provider-typebox": "^6.1.0",
     "@repo/database": "workspace:*",
     "@repo/schemas": "workspace:*",
+    "@sinclair/typebox": "^0.34.49",
     "fastify": "^5.8.5"
   },
   "devDependencies": {
