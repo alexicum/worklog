@@ -12,10 +12,10 @@
     }
   },
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "pnpm clean && tsc",
-    "typecheck": "tsc --noEmit",
-    "dev": "pnpm clean && tsc --watch --preserveWatchOutput"
+    "clean:dist": "rm -rf dist .turbo tsconfig.tsbuildinfo",
+    "build": "pnpm clean:dist && tsc --build",
+    "typecheck": "tsc --build --noEmit",
+    "dev": "pnpm clean:dist && tsc --build --watch --preserveWatchOutput"
   },
   "dependencies": {
     "@sinclair/typebox": "^0.34.49"

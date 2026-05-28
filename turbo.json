@@ -9,7 +9,7 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "clean": {
+    "clean:dist": {
       "cache": false
     },
     "dev": {
