@@ -1,0 +1,47 @@
+name: worklog
+services:
+  # Сервис базы данных PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: worklog-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: worklog_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d worklog_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - worklog-network
+
+  # Сервис Fastify API
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: worklog-api
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL={DATABASE_URL}
+      # - DATABASE_URL=postgresql://postgres:postgres_pwd_0@postgres:5432/worklog_db?schema=public
+      # - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${DB_PORT}/${POSTGRES_DB}?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy # Ждем, пока Postgres полностью запустится и пройдет healthcheck
+    networks:
+      - worklog-network
+
+volumes:
+  pgdata:
+
+networks:
+  worklog-network:
+    driver: bridge

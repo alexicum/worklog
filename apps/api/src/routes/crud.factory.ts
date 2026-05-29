@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { Type, TObject } from '@sinclair/typebox';
-import { CrudService } from '#api/services/crud.service.js';
+import { CrudService } from '../services/crud.service.js';
 
 interface CrudSchemas {
   response: TObject<any>;

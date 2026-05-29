@@ -12,13 +12,13 @@
     }
   },
   "scripts": {
-    "clean:dist": "rm -rf dist .turbo tsconfig.tsbuildinfo",
+    "clean:dist": "rm -rf dist .turbo tsconfig.tsbuildinfo src/generated",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "build": "pnpm clean:dist && pnpm db:generate && tsc",
+    "build": "tsc --build",
     "typecheck": "pnpm db:generate && tsc --noEmit",
-    "dev": "pnpm clean:dist && pnpm db:generate && tsc --build --watch --preserveWatchOutput"
+    "dev": "tsc --build --watch --preserveWatchOutput"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",

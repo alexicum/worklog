@@ -13,9 +13,9 @@
   },
   "scripts": {
     "clean:dist": "rm -rf dist .turbo tsconfig.tsbuildinfo",
-    "build": "pnpm clean:dist && tsc --build",
+    "build": "tsc --build",
     "typecheck": "tsc --build --noEmit",
-    "dev": "pnpm clean:dist && tsc --build --watch --preserveWatchOutput"
+    "dev": "tsc --build --watch --preserveWatchOutput"
   },
   "dependencies": {
     "@sinclair/typebox": "^0.34.49"

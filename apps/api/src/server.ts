@@ -1,4 +1,4 @@
-import { app } from '#api/app.js';
+import { app } from './app.js';
 
 const start = async () => {
   try {

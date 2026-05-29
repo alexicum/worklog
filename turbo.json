@@ -1,9 +1,17 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
+  "globalEnv": ["DATABASE_URL"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "dependsOn": ["clean:dist", "db:generate", "^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.production.local",
+        ".env.local",
+        ".env.production",
+        ".env"
+      ],      
+      "outputs": ["dist/**", "src/generated/**"]
     },
     "typecheck": {
       "dependsOn": ["^build"],
@@ -13,8 +21,26 @@
       "cache": false
     },
     "dev": {
+      "dependsOn": ["^db:generate"],
       "cache": false,
-      "persistent": true
-    }
+      "persistent": true,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.production.local",
+        ".env.local",
+        ".env.production",
+        ".env"
+      ],
+      "env": ["DATABASE_URL"]
+    },
+    "db:generate": { 
+      "cache": false
+    }, 
+    "db:migrate": { 
+      "cache": false
+    }, 
+    "db:deploy": { 
+      "cache": false
+    } 
   }
 }

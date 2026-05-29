@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
-import { createCrudRoutes } from '#api/routes/crud.factory.js';
-import { workLogService } from '#api/services/worklog.service.js';
+import { createCrudRoutes } from './routes/crud.factory.js';
+import { workLogService } from './services/worklog.service.js';
 import * as workLogSchemas from '@repo/schemas';
 
 const app = Fastify({ logger: true }).withTypeProvider<TypeBoxTypeProvider>();
@@ -15,7 +15,7 @@ app.register(createCrudRoutes(
     paramsWithId: workLogSchemas.ParamsWithIdSchema,
     errorResponse: workLogSchemas.ErrorResponseSchema
   },
-  'work-logs'
+  'worklog'
 ));
 
 export { app };

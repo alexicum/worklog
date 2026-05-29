@@ -8,8 +8,8 @@
   },
   "scripts": {
     "clean:dist": "rm -rf dist .turbo tsconfig.tsbuildinfo",
-    "build": "pnpm clean:dist && tsc --build",
-    "typecheck": "tsc --noEmit",
+    "build": "tsc --build",
+    "typecheck": "tsc --build --noEmit",
     "start": "node dist/server.js",
     "dev": "tsx watch --clear-screen=false src/server.ts"
   },

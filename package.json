@@ -7,7 +7,7 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
-    "clean:dist": "rimraf .turbo && turbo run clean:dist"
+    "clean:dist": "rm -rf .turbo && turbo run clean:dist"
   },
   "keywords": [],
   "author": "",

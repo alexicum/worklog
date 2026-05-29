@@ -1,4 +1,4 @@
-import { CrudService } from '#api/services/crud.service.js';
+import { CrudService } from '../services/crud.service.js';
 import { prisma, WorkLog } from '@repo/database';
 import { CreateWorkLog, UpdateWorkLog } from '@repo/schemas';
 

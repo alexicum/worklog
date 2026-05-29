@@ -9,7 +9,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "#api/*": ["./src/*"],
       "@repo/schemas": ["../../packages/schemas/src/index.ts"],
       "@repo/database": ["../../packages/database/src/index.ts"]
     },
