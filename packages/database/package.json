@@ -14,7 +14,10 @@
   "scripts": {
     "clean:dist": "rm -rf dist .turbo tsconfig.tsbuildinfo src/generated",
     "db:generate": "prisma generate",
+    "db:push": "prisma db push --force-reset",
     "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:reset": "prisma generate && prisma db push --force-reset && prisma db seed",
     "db:studio": "prisma studio",
     "build": "tsc --build",
     "typecheck": "pnpm db:generate && tsc --noEmit",
