@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { defineConfig, env } from 'prisma/config';
 
-console.log('connectionString in prisma.config: ', env('DATABASE_URL'))
+// console.log('connectionString in prisma.config: ', env('DATABASE_URL'))
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
