@@ -34,13 +34,14 @@ COPY packages/database ./packages/database
 COPY packages/schemas ./packages/schemas
 
 # Собираем все пакеты через Turborepo (выполнит tsc во всех dist)
-RUN pnpm build
+# docker build не передает переменные в RUN 
+RUN DATABASE_URL="postgresql://mock:mock@localhost:5432/mock" pnpm build
 
 # --- Этап 2: Финальный легковесный образ ---
 FROM base AS runner
-# RUN npm install -g pnpm
 
 WORKDIR /app
+ENV CI=true
 
 # Копируем только скомпилированный код и необходимые package.json файлы
 COPY --from=builder /app/package.json /app/pnpm-workspace.yaml /app/pnpm-lock.yaml ./
@@ -54,6 +55,7 @@ RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
 EXPOSE 3000
 
-# Запускаем наше скомпилированное Fastify-приложение
-# CMD ["sleep", "infinty"]
+# Запускаем скомпилированное Fastify-приложение
 CMD ["pnpm", "--filter", "@repo/api", "start"]
+# Для отладки при падении
+# CMD ["sleep", "infinity"]

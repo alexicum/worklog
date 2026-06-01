@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
   "globalEnv": ["DATABASE_URL"],
+  "globalDependencies": [".env"],
   "tasks": {
     "build": {
       "dependsOn": ["clean:dist", "db:generate", "^build"],
@@ -14,8 +15,7 @@
       "outputs": ["dist/**", "src/generated/**"]
     },
     "typecheck": {
-      "dependsOn": ["^build"],
-      "outputs": []
+      "dependsOn": ["^typecheck"],
     },
     "clean:dist": {
       "cache": false

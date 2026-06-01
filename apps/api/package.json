@@ -10,8 +10,8 @@
     "clean:dist": "rm -rf dist .turbo tsconfig.tsbuildinfo",
     "build": "tsc --build",
     "typecheck": "tsc --build --noEmit",
-    "start": "node dist/server.js",
-    "dev": "tsx watch --clear-screen=false src/server.ts"
+    "start": "node --env-file=../../.env dist/server.js",
+    "dev": "tsx watch --env-file=../../.env --clear-screen=false src/server.ts"
   },
   "dependencies": {
     "@fastify/type-provider-typebox": "^6.1.0",

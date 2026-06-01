@@ -15,3 +15,6 @@ build
 docker-compose.yml
 
 .env
+.env.prod
+.env.local
+.env.*.local

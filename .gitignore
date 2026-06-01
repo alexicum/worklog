@@ -11,6 +11,7 @@ out
 
 # Локальные переменные окружения и секреты
 .env
+.env.prod
 .env.local
 .env.*.local
 
@@ -29,4 +30,4 @@ Thumbs.db
 packages/database/src/generated
 
 # Скрипты инициализации проекта
-*init*.sh
+init_scripts
