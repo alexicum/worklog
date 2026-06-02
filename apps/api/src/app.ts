@@ -22,6 +22,6 @@ app.register(createCrudRoutes(
     errorResponse: workLogSchemas.ErrorResponseSchema
   },
   'worklog'
-));
+), {prefix: '/api'});
 
 export { app };
