@@ -1,0 +1,15 @@
+import { configureStore } from '@reduxjs/toolkit';
+import { baseApi } from '@/shared/api/base';
+
+export const store = configureStore({
+  reducer: {
+    [baseApi.reducerPath]: baseApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(baseApi.middleware),
+});
+
+declare global {
+  type RootState = ReturnType<typeof store.getState>;
+  type AppDispatch = typeof store.dispatch;
+}
