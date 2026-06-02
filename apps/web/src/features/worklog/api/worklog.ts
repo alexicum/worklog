@@ -1,4 +1,4 @@
-import { baseApi } from '@/shared/api/base';
+import { baseApi } from '@/shared/api';
 import type { WorkLog, CreateWorkLog } from '@repo/schemas';
 
 export const worklogApi = baseApi.injectEndpoints({
