@@ -47,6 +47,10 @@
     }, 
     "db:reset": { 
       "cache": false
-    }, 
+    },
+    "lint:fsd": {
+      "cache": true,
+      "outputs": []
+    } 
   }
 }
