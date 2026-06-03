@@ -56,6 +56,6 @@ RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 EXPOSE 3000
 
 # Запускаем скомпилированное Fastify-приложение
-CMD ["pnpm", "--filter", "@repo/api", "start"]
+CMD ["pnpm", "--filter", "@repo/api", "exec", "node", "dist/server.js"]
 # Для отладки при падении
 # CMD ["sleep", "infinity"]

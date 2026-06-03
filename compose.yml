@@ -31,7 +31,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: worklog
     ports:
-      - '5433:5432'
+      - '127.0.0.1:5433:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -48,10 +48,21 @@ services:
       dockerfile: apps/api/Dockerfile
     container_name: worklog-api
     ports:
-      - '3000:3000'
+      - '127.0.0.1:3000:3000'
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
     depends_on:
       db:
         condition: service_healthy # Ожидание запуска и успешного healthcheck контейнера db  
+  web:
+    container_name: worklog-web
+    <<: *defaults    
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "127.0.0.1:5173:80"
+    # depends_on:
+    #   api:
+    #     condition: service_healthy

@@ -13,6 +13,7 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    strictPort: true, // Если docker контейнер запущен - выведет ошибку
     proxy: {
       '/api': {
         target: 'http://localhost:3000', // Адрес Fastify бэкенда apps/api

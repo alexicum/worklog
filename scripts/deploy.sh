@@ -18,3 +18,6 @@ docker compose --env-file $ENV_FILE run --rm api pnpm --filter=@repo/database db
 
 # Start the fastify api service
 docker compose --env-file $ENV_FILE up --wait --no-build api
+
+# Start the web service
+docker compose up -d web
