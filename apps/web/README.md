@@ -1,73 +1,55 @@
-# React + TypeScript + Vite
+# 🌐 @repo/web — Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Клиентское веб-приложение монорепозитория **WorkLog**, SPA.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Технический Стек
 
-## React Compiler
+*   **Runtime & Bundler:** React 19 + TypeScript + Vite 8
+*   **State Management & Networking:** Redux Toolkit + RTK Query (сквозная типизация контрактов с бэкенда).
+*   **Routing:** React Router v7 (ленивая загрузка чанков через `React.lazy`).
+*   **UI** Material UI v9 + MUI X v9 Data Grid (Community).
+*   **Валидация:** Локальные контролируемые состояния на базе схем `@repo/schemas`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📐 Архитектура: FSD
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Линтер: **Steiger**.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+src/
+├── app/                        # Инициализация приложения (Store, Провайдеры, Роутер)
+│   ├── store/                  # Глобальное Redux хранилище + declare global { RootState }
+│   └── routes/                 # Конфигурация маршрутов (с поддержкой Suspense)
+├── pages/                      # Страницы (Точки композиции виджетов и фич)
+│   └── worklog/                # Страница Журнала Работ (экспортируется как Lazy)
+├── widgets/                    # Крупные самостоятельные UI-блоки (Сайдбары, Шапки)
+├── features/                   # Бизнес-фичи (CRUD-действия пользователя)
+│   └── worklog/                # Слайс Журнала Работ (Изолированные микро-модули)
+│       ├── api/                # Эндпоинты worklogApi.injectEndpoints()
+│       └── ui/
+│           ├── WorkLogTable/   # Таблица (DataGrid, Колонки, Кнопки действий)
+│           └── WorkLogForm/    # Форма (Создание/Обновление)
+└── shared/                     # Абстрактная техническая обвязка (Без бизнес-логики)
+    ├── api/                    # Базовый инстанс baseApi (baseUrl: '/api', теги кэша)
+    └── store/                  # Типизированные глобальные хуки useAppDispatch / useAppSelector
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Команды Скриптов (Запуск из корня монорепозитория)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Управление запуском и сборкой осуществляется через **Turborepo**:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+*   `pnpm --filter @repo/web dev` — Запуск локального сервера разработки (Порт `5173`). Настроено прозрачное проксирование запросов `/api` на Fastify-бэкенд (Порт `3000`).
+*   `pnpm --filter @repo/web lint:fsd` — Проверка файловой структуры проекта архитектурным линтером **Steiger**.
+*   `pnpm --filter @repo/web build` — Строгая проверка типов через `tsc -b` (на основе Project References) и последующая продакшн-сборка статики через Vite 8.
+
+---
+
+## 🐳 Контейнеризация (Multi-stage Dockerfile)
+
+Production-сборка приложения полностью изолирована от хост-окружения:
+1.  **Stage 1 & 2:** Установка зависимостей, прохождение `lint:fsd`, компиляция локального графа зависимостей монорепозитория (`packages/schemas` ➔ `apps/web`) через глобальный шедулер `pnpm turbo build`.
+2.  **Изоляция pnpm 10+:** Применение команды `pnpm deploy --prod --legacy` гарантирует сборку приложения в чистую папку `/prod/web` без разрушения символических ссылок монорепозитория.
+3.  **Stage 3 (Runner):** Дистрибутив упаковывается в ультралегкий образ `nginx:alpine` (размер ~25MB). Внутри `nginx.conf` настроена раздача статики, поддержка SPA-роутинга (`try_files`) и проксирование API эндпоинтов на бэкенд внутри Docker-сети.
