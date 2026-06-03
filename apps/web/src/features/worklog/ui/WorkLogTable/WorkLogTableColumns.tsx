@@ -1,8 +1,12 @@
 import type { GridColDef } from '@mui/x-data-grid';
 import type { WorkLog } from '@repo/schemas';
 import { WorkLogDeleteAction } from './WorkLogDeleteAction';
+import { WorkLogEditAction } from './WorkLogEditAction';
+import { Box } from '@mui/material';
+import { dateRangeFilterOperator } from '@/shared/ui/DateRangeFilterInput';
 
 interface GetColumnsOptions {
+  onEdit: (worklog: WorkLog) => void;
   onDelete: (id: string) => Promise<void>;
   isDeleting: boolean;
 }
@@ -11,7 +15,7 @@ interface GetColumnsOptions {
  * Функция генерации колонок для MUI DataGrid.
  * Фильтрация и сортировка разрешены строго для поля doneAt.
  */
-export const getWorkLogTableColumns = ({ onDelete, isDeleting }: GetColumnsOptions): GridColDef<WorkLog>[] => [
+export const getWorkLogTableColumns = ({ onEdit, onDelete, isDeleting }: GetColumnsOptions): GridColDef<WorkLog>[] => [
   { 
     field: 'workerName', 
     headerName: 'Сотрудник', 
@@ -63,13 +67,14 @@ export const getWorkLogTableColumns = ({ onDelete, isDeleting }: GetColumnsOptio
     valueGetter: (value) => (value ? new Date(value) : null),
     valueFormatter: (value) => {
       if (!value) return '';
-      const date = new Date(value);
-      return date.toLocaleDateString('ru-RU');
-    }
+      const cellDate = new Date(value);
+      return cellDate.toLocaleDateString('ru-RU');
+    },
+    filterOperators: [dateRangeFilterOperator]
   },
   {
-    field: 'actions',      // Сменили на стандартное actions
-    type: 'actions',       // Добавили нативный тип действий для оптимизации MUI
+    field: 'actions',
+    type: 'actions',
     headerName: 'Действия',
     width: 100,
     sortable: false,
@@ -77,11 +82,18 @@ export const getWorkLogTableColumns = ({ onDelete, isDeleting }: GetColumnsOptio
     align: 'center',
     headerAlign: 'center',
     renderCell: (params) => (
-      <WorkLogDeleteAction 
-        params={params} 
-        onDelete={onDelete} 
-        disabled={isDeleting} 
-      />
+      <Box sx={{ display: 'flex', gap: 0.5 }}>
+        <WorkLogEditAction 
+          params={params} 
+          onEdit={onEdit} 
+          disabled={isDeleting} 
+        />      
+        <WorkLogDeleteAction 
+          params={params} 
+          onDelete={onDelete} 
+          disabled={isDeleting} 
+        />
+      </Box>
     )
   }
 ];

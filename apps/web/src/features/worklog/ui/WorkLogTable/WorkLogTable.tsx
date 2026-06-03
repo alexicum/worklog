@@ -1,18 +1,20 @@
 import { useCallback, useMemo } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+import type { GridRowParams } from '@mui/x-data-grid';
 import { Box, Typography, Alert, CircularProgress } from '@mui/material';
+import type { WorkLog } from '@repo/schemas';
 import { useGetWorkLogsQuery, useDeleteWorkLogMutation } from '../../api/worklog';
 import { getWorkLogTableColumns } from './WorkLogTableColumns';
 import { CustomToolbar } from './CustomToolbar';
 
-export const WorkLogTable = () => {
-  // Запрос данных через RTK Query
+interface WorkLogTableProps {
+  onEdit: (worklog: WorkLog) => void;
+}
+
+export const WorkLogTable = ({ onEdit }: WorkLogTableProps) => {
   const { data: worklogs = [], isLoading, isError } = useGetWorkLogsQuery();
-  
-  // Мутация удаления с автообновлением кэша
   const [deleteWorkLog, { isLoading: isDeleting }] = useDeleteWorkLogMutation();
 
-  // Обработчик удаления
   const handleDelete = useCallback(async (id: string) => {
     if (window.confirm('Вы уверены, что хотите удалить эту запись из журнала?')) {
       try {
@@ -22,16 +24,22 @@ export const WorkLogTable = () => {
         alert('Не удалось удалить запись. Попробуйте еще раз.');
       }
     }
-  }, [deleteWorkLog])
+  }, [deleteWorkLog]);
 
+  // Прокидываем стабильную ссылку onEdit в генератор колонок
   const columns = useMemo(() => 
-    getWorkLogTableColumns({ onDelete: handleDelete, isDeleting }), 
-    [handleDelete, isDeleting]
+    getWorkLogTableColumns({ onEdit, onDelete: handleDelete, isDeleting }), 
+    [onEdit, handleDelete, isDeleting]
   );
+
+  // Обработчик двойного клика по строке
+  const handleRowDoubleClick = useCallback((params: GridRowParams<WorkLog>) => {
+    onEdit(params.row);
+  }, [onEdit]);
 
   if (isLoading) {
     return (
-      <Box sx={{display: "flex", justifyContent: "center", alignItems: "center", p: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -48,7 +56,7 @@ export const WorkLogTable = () => {
   return (
     <Box sx={{ height: 500, width: '100%', mt: 2 }}>
       {worklogs.length === 0 ? (
-        <Typography variant="body1" color="text.secondary" align="center" sx={{ p: 4 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ align: 'center', p: 4 }}>
           Журнал работ пуст. Добавьте первую запись.
         </Typography>
       ) : (
@@ -60,8 +68,18 @@ export const WorkLogTable = () => {
             pagination: { paginationModel: { pageSize: 10 } },
           }}
           disableRowSelectionOnClick
-          slots={{ toolbar: CustomToolbar }}
           disableColumnMenu
+          onRowDoubleClick={handleRowDoubleClick}
+          showToolbar
+          slots={{ toolbar: CustomToolbar }}
+          slotProps={{
+            filterPanel: {
+              sx: {
+                width: '750px',
+                maxWidth: '95vw'
+              },
+            },
+          }}
         />
       )}
     </Box>

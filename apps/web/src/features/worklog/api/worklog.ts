@@ -1,5 +1,5 @@
 import { baseApi } from '@/shared/api';
-import type { WorkLog, CreateWorkLog } from '@repo/schemas';
+import type { WorkLog, CreateWorkLog, UpdateWorkLog } from '@repo/schemas';
 
 export const worklogApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -30,6 +30,19 @@ export const worklogApi = baseApi.injectEndpoints({
     }),
 
     /**
+     * Обновление существующей записи журнала работ
+     */
+    updateWorkLog: builder.mutation<WorkLog, { id: string; body: UpdateWorkLog }>({
+      query: ({ id, body }) => ({
+        url: `/worklog/${id}`,
+        method: 'PUT',
+        body,
+      }),
+      // Инвалидируем список, чтобы таблица сразу перерисовалась с новыми значениями
+      invalidatesTags: [{ type: 'WorkLog', id: 'LIST' }],
+    }),
+
+    /**
      * Удаление записи по id (UUID)
      */
     deleteWorkLog: builder.mutation<{ success: boolean }, string>({
@@ -48,5 +61,6 @@ export const worklogApi = baseApi.injectEndpoints({
 export const {
   useGetWorkLogsQuery,
   useCreateWorkLogMutation,
+  useUpdateWorkLogMutation,
   useDeleteWorkLogMutation,
 } = worklogApi;
